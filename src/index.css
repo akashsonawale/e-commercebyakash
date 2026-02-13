@@ -15,3 +15,40 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
+
+:root{
+  --mainBlue: #06b6d4;
+  --mainText: #0f172a;
+  --muted: #6b7280;
+  --lightBlue: #0ea5e9;
+}
+
+.container{ max-width:1200px }
+.gap-2{ gap:0.5rem }
+
+/* make primary buttons slightly bolder */
+.btn-primary{ background:linear-gradient(90deg,#2563eb,#06b6d4); border:none }
+
+/* Aesthetic improvements */
+body { background: linear-gradient(180deg,#f8fafc 0%, #f1f5f9 100%); }
+.card, .akash-card, .featured-card { border-radius: 12px; box-shadow: 0 8px 24px rgba(15,23,42,0.06); border: none }
+.akash-card .card-body { background: white; border-bottom-left-radius:12px; border-bottom-right-radius:12px }
+.product-title{ font-size:0.95rem; color:var(--mainText); font-weight:600 }
+.price{ color:#0b7285; font-weight:700 }
+.cart-btn{ background: linear-gradient(90deg,#7c3aed,#06b6d4); color:#fff }
+.featured-section h5{ font-size:1.1rem; font-weight:800; color:var(--mainText) }
+.featured-img{ width:120px; height:90px; object-fit:cover; border-radius:8px }
+
+/* Make CategoryGrid cards softer */
+.card.other-card { border-style: dashed; color:var(--muted) }
+
+/* Flipkart-like product grid tweaks */
+.products-grid{ display:grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap:1rem }
+.product-card{ background:transparent }
+
+/* Ensure product columns center inside a centered row */
+.row.justify-content-center > [class*='col-'] { display:flex; justify-content:center; }
+
+
+
+

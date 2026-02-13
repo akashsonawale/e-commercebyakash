@@ -1,22 +1,20 @@
+// © Akash Sonawale. All rights reserved.
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import logo from '../logo.svg';
 import styled from 'styled-components';
 import { ButtonContainer } from './Button';
-import { ThemeContext } from './context/ThemeContexts';
-import { FaRegMoon } from 'react-icons/fa';
-import { GoSun } from 'react-icons/go';
 import { AiOutlineMenu } from 'react-icons/ai'
 import { ProductConsumer } from '../context';
+import { AuthConsumer } from '../context/AuthContext';
 import { NavLink } from 'react-router-dom';
 
 class Navbar extends Component {
-  static contextType = ThemeContext;
 
   constructor(props) {
     super(props);
     this.state = {
-      isMobile: window.innerWidth <= 768, // Adjust the breakpoint as needed
+      isMobile: window.innerWidth <= 768,
       menuOpen: false,
     };
 
@@ -34,7 +32,7 @@ class Navbar extends Component {
 
   handleResize() {
     this.setState({
-      isMobile: window.innerWidth <= 768, // Adjust the breakpoint as needed
+      isMobile: window.innerWidth <= 768,
     });
   }
 
@@ -43,19 +41,19 @@ class Navbar extends Component {
   }
 
   render() {
-    const { theme, toggleTheme } = this.context;
     const { isMobile, menuOpen } = this.state;
 
     return (
-      <div>
+      <div className="amazon-header">
         {isMobile ? (
-          // Mobile View
           <MobileNavWrapper className="navbar nav-bar-expand-sm bg-slate-800 px-sm-5 w-100">
-            <Link to="/" className="w-50">
-              <img src={logo} alt="store" className="navbar-brand" />
-            </Link>
-            <div className="text-white w-50 menu" onClick={this.handleMenu}>
-              <AiOutlineMenu className="menubar" />
+            <div className="d-flex justify-content-between align-items-center w-100">
+              <Link to="/" className="d-flex align-items-center">
+                <img src={logo} alt="Akash" className="navbar-brand" />
+              </Link>
+              <div className="text-white menu" onClick={this.handleMenu}>
+                <AiOutlineMenu className="menubar" />
+              </div>
             </div>
             {menuOpen && (
               <div className=" resmenu w-100 ">
@@ -63,19 +61,18 @@ class Navbar extends Component {
                   Products
                 </NavLink>
                 <ProductConsumer>
-                  {value => (<li style={{
-                    listStyleType: 'none'
-                  }}>
-                    <input placeholder='Search for products' onChange={(e) => {
-                      value.filterProducts(e.target.value);
-                    }}>
-                    </input>
-                  </li>)
-                  }
+                  {value => (
+                    <li style={{ listStyleType: 'none' }}>
+                      <input
+                        placeholder='Search for products'
+                        style={{ width: '100%', padding: '0.4rem' }}
+                        onChange={(e) => {
+                          value.filterProducts(e.target.value);
+                        }}
+                      />
+                    </li>
+                  )}
                 </ProductConsumer>
-                <Link className="text-white bg-transparent themes" onClick={toggleTheme}>
-                  {theme ? <h6>Dark Mode <FaRegMoon /></h6> : <h6>Light Mode <GoSun /></h6>}
-                </Link>
                 <Link to="/cart" className="ml-auto">
                   <ButtonContainer>
                     <i className="fas fa-cart-plus">my cart</i>
@@ -85,36 +82,58 @@ class Navbar extends Component {
             )}
           </MobileNavWrapper>
         ) : (
-          // Desktop View
-          <DesktopNavWrapper className="navbar nav-bar-expand-sm bg-slate-800 px-sm-5">
-            <Link to="/">
-              <img src={logo} alt="store" className="navbar-brand" />
-            </Link>
-            <ul className="navbar-nav align-items-center">
-              <li className="nav-item ml-5">
-                <Link to="/" className="nav-link">
-                  Products
-                </Link>
-              </li>
-            </ul>
-            <ul className="navbar-nav align-items-center">
-              <ProductConsumer>
-                {value => (<li className="nav-item ml-5">
-                  <input placeholder='Search for products' onChange={(e) => {
-                    value.filterProducts(e.target.value);
-                  }}>
-                  </input>
-                </li>)
-                }
-              </ProductConsumer>
-            </ul>
-            <Link to="/cart" className="ml-auto">
-              <ButtonContainer>
-                <i className="fas fa-cart-plus">my cart</i>
-              </ButtonContainer>
-            </Link>
-            <div className="text-white bg-transparent themes mainmenu" onClick={toggleTheme}>
-              {theme ? <FaRegMoon /> : <GoSun />}
+          <DesktopNavWrapper className="navbar nav-bar-expand-sm bg-slate-800 px-sm-5 amazon-desktop-nav">
+            <div className="amazon-left d-flex align-items-center">
+              <Link to="/" className="d-flex align-items-center">
+                <img src={logo} alt="Akash" className="navbar-brand" />
+              </Link>
+              <div className="amazon-location d-none d-md-block">
+                <small>Hello</small>
+                <div><strong>Select your address</strong></div>
+              </div>
+            </div>
+            <ProductConsumer>
+              {value => (
+                <div className="amazon-search flex-grow-1">
+                  <input
+                    className="amazon-search-input"
+                    placeholder="Search products"
+                    onChange={(e) => value.filterProducts(e.target.value)}
+                  />
+                  <button className="amazon-search-button" type="button">
+                    🔍
+                  </button>
+                </div>
+              )}
+            </ProductConsumer>
+            <div className="amazon-right d-flex align-items-center">
+              <AuthConsumer>
+                {(auth) => (
+                  <>
+                    <div className="amazon-account d-none d-md-block">
+                      <small>{auth.user ? `Hello, ${auth.user.name}` : 'Hello, sign in'}</small>
+                      <div>
+                        {auth.user ? (
+                          <button className="btn btn-link p-0" onClick={() => { auth.logout(); window.location.href = '/'; }}>Logout</button>
+                        ) : (
+                          <>
+                            <Link to="/login">Login</Link> / <Link to="/signup">Sign up</Link>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  </>
+                )}
+              </AuthConsumer>
+              <div className="amazon-orders d-none d-md-block">
+                <small>Returns</small>
+                <div><strong>&amp; Orders</strong></div>
+              </div>
+              <Link to="/cart" className="amazon-cart-link">
+                <ButtonContainer cart>
+                  <i className="fas fa-cart-plus" />&nbsp;Cart
+                </ButtonContainer>
+              </Link>
             </div>
           </DesktopNavWrapper>
         )}
@@ -124,19 +143,27 @@ class Navbar extends Component {
 }
 
 const NavWrapper = styled.nav`
+  background: linear-gradient(90deg,#0f172a,#1f2937);
+  padding: 0.5rem 1rem;
+  box-shadow: 0 6px 18px rgba(2,6,23,0.4);
   .nav-link {
-    color: var(--mainWhite) !important;
-    font-size: 1.3rem;
+    color: #fff !important;
+    font-size: 1rem;
     text-transform: capitalize;
   }
+  .navbar-brand{ height:40px; }
+  .amazon-left{ gap:0.75rem }
+  .amazon-search{ display:flex; align-items:center; gap:0.5rem; }
+  .amazon-search-input{ flex:1; padding:0.5rem 0.75rem; border-radius:4px 0 0 4px; border:none }
+  .amazon-search-button{ padding:0.5rem 0.8rem; border-radius:0 4px 4px 0; border:none; background:#ff8a00; color:#fff }
+  .amazon-cart-link .btn{ background: linear-gradient(90deg,#06b6d4,#7c3aed); color:white }
+  .amazon-account small{ color:#d1d5db }
 `;
 
 const MobileNavWrapper = styled(NavWrapper)`
-  /* Add mobile-specific styles here */
 `;
 
 const DesktopNavWrapper = styled(NavWrapper)`
-  /* Add desktop-specific styles here */
 `;
 
 export default Navbar;
